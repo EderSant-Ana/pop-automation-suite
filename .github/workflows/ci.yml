@@ -17,7 +17,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
 
       # 1. Start Backend (Usando o comando correto e garantindo o background no GitHub)
       - name: Start Spring Boot API
@@ -46,14 +46,13 @@ jobs:
           cd automation-tests
           npm install
 
-      # Instala o k6 CLI nativamente no Ubuntu do GitHub para evitar problemas de rede Docker
+      # Instala o k6 CLI de forma direta e resiliente usando o pacote .deb oficial
       - name: Install k6 CLI
         run: |
-          sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
-          echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.doc/k6.list
-          # Nota: Usamos o fallback oficial caso o repositório customizado demore a atualizar
-          sudo apt-get update || true
-          sudo apt-get install k6 || wget https://github.com/grafana/k6/releases/download/v0.51.0/k6-v0.51.0-amd64.deb && sudo dpkg -i k6-v0.51.0-amd64.deb
+          echo "=== Baixando pacote oficial do k6 ==="
+          wget https://github.com/grafana/k6/releases/download/v0.51.0/k6-v0.51.0-amd64.deb
+          echo "=== Instalando o k6 no sistema ==="
+          sudo dpkg -i k6-v0.51.0-amd64.deb
 
       # 3. Execute REST-Assured
       - name: Run REST-Assured Tests
