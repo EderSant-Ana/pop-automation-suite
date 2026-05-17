@@ -1,0 +1,14 @@
+{
+  "name": "automation-suite",
+  "version": "1.0.0",
+  "scripts": {
+    "cypress:run": "cypress run",
+    "postman:run": "newman run postman/collection.json",
+    "k6:run": "k6 run k6/performance.js"
+  },
+  "devDependencies": {
+    "cypress": "^13.6.6",
+    "newman": "^6.1.1",
+    "typescript": "^5.3.3"
+  }
+}

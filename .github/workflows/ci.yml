@@ -1,0 +1,80 @@
+name: Automation POC Pipeline
+
+on: [push, pull_request]
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # 1. Start Backend (Usando o comando correto e garantindo o background no GitHub)
+      - name: Start Spring Boot API
+        run: |
+          cd backend-api
+          nohup mvn spring-boot:run > spring.log 2>&1 &
+          
+      # 2. Start Frontend (Usando o nohup para manter o processo vivo)
+      - name: Start React App
+        run: |
+          cd frontend-app
+          npm install
+          nohup npm run dev > vite.log 2>&1 &
+
+      # Aguarda os serviços iniciarem e valida se estão respondendo
+      - name: Wait for services
+        run: |
+          echo "Aguardando 15 segundos para inicialização dos serviços..."
+          sleep 15
+          echo "=== Validando se o Backend está vivo ==="
+          curl -v http://localhost:8080/api/todos
+
+      # Instala as dependências da suíte de testes (Cypress, Newman, etc)
+      - name: Install Test Suite Dependencies
+        run: |
+          cd automation-tests
+          npm install
+
+      # Instala o k6 CLI nativamente no Ubuntu do GitHub para evitar problemas de rede Docker
+      - name: Install k6 CLI
+        run: |
+          sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+          echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.doc/k6.list
+          # Nota: Usamos o fallback oficial caso o repositório customizado demore a atualizar
+          sudo apt-get update || true
+          sudo apt-get install k6 || wget https://github.com/grafana/k6/releases/download/v0.51.0/k6-v0.51.0-amd64.deb && sudo dpkg -i k6-v0.51.0-amd64.deb
+
+      # 3. Execute REST-Assured
+      - name: Run REST-Assured Tests
+        run: |
+          cd automation-tests/rest-assured
+          mvn test
+
+      # 4. Execute Postman via Newman
+      - name: Run Postman Tests
+        run: |
+          cd automation-tests
+          npm run postman:run
+
+      # 5. Execute Cypress (Headless)
+      - name: Run Cypress E2E Tests
+        run: |
+          cd automation-tests
+          npm run cypress:run
+
+      # 6. Execute Grafana k6 (Via CLI nativo para bater no localhost com sucesso)
+      - name: Run k6 Performance Tests
+        run: |
+          cd automation-tests
+          npm run k6:run

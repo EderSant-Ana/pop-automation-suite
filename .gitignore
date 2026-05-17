@@ -1,0 +1,74 @@
+# ====================================================================
+# Sistema Operacional e Arquivos Globais
+# ====================================================================
+.DS_Store
+Thumbs.db
+*.log
+*.log.*
+nohup.out
+
+# ====================================================================
+# IDEs e Editores de Código
+# ====================================================================
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# ====================================================================
+# Ecossistema Node.js / JavaScript / TypeScript (Frontend & Testes)
+# ====================================================================
+node_modules/
+/frontend-app/node_modules/
+/automation-tests/node_modules/
+
+# Arquivos de Build e Distribuíveis
+dist/
+/frontend-app/dist/
+build/
+.npm
+.eslintcache
+
+# Local Env Files (Chaves e segredos que nunca devem subir)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# TypeScript
+*.tsbuildinfo
+
+# ====================================================================
+# Ecossistema Java / Maven (Backend & REST-Assured)
+# ====================================================================
+target/
+/backend-api/target/
+/automation-tests/rest-assured/target/
+
+# Arquivos do Eclipse/IntelliJ específicos de Java
+.classpath
+.project
+.settings/
+*.class
+*.jar
+*.war
+*.ear
+
+# ====================================================================
+# Cypress (Artefatos de Execução Local)
+# ====================================================================
+# Evita subir vídeos e prints de falhas gerados localmente no seu computador
+/automation-tests/cypress/screenshots/
+/automation-tests/cypress/videos/
+/automation-tests/cypress/downloads/
+
+# ====================================================================
+# Grafana k6
+# ====================================================================
+# Se você usou o truque de colocar o executável do k6 direto na pasta de testes
+/automation-tests/k6.exe

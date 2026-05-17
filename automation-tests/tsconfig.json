@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ES2020", // 👈 Atualizado de 'es5' para 'ES2020' para remover o aviso
+    "lib": ["ES2020", "dom"],
+    "types": ["cypress", "node"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": [
+    "cypress/**/*.ts",
+    "cypress.config.ts"
+  ]
+}
