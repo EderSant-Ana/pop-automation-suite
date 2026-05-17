@@ -46,13 +46,16 @@ jobs:
           cd automation-tests
           npm install
 
-      # Instala o k6 CLI de forma direta e resiliente usando o pacote .deb oficial
+      # Instala o k6 CLI baixando o binário estático oficial pré-compilado (.tar.gz)
       - name: Install k6 CLI
         run: |
-          echo "=== Baixando pacote oficial do k6 ==="
-          wget https://github.com/grafana/k6/releases/download/v0.51.0/k6-v0.51.0-amd64.deb
-          echo "=== Instalando o k6 no sistema ==="
-          sudo dpkg -i k6-v0.51.0-amd64.deb
+          echo "=== Baixando o binário oficial do k6 ==="
+          curl -L -o k6.tar.gz https://github.com/grafana/k6/releases/download/v0.51.0/k6-v0.51.0-linux-amd64.tar.gz
+          echo "=== Extraindo e instalando o executável ==="
+          tar -xzf k6.tar.gz
+          sudo mv k6-v0.51.0-linux-amd64/k6 /usr/local/bin/
+          echo "=== Validando instalação ==="
+          k6 version
 
       # 3. Execute REST-Assured
       - name: Run REST-Assured Tests
